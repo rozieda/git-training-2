@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Borang Pendaftaran Inventori</title>
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#ffffff; --accent:#0a74da; --muted:#666;
+    }
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:#222;
+      margin:0;
+      padding:32px;
+    }
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:1fr 480px;
+      gap:24px;
+      align-items:start;
+    }
+    h1{margin:0 0 8px 0;font-size:20px}
+    p.lead{margin:0 0 16px 0;color:var(--muted)}
+    .card{
+      background:var(--card);
+      padding:16px;
+      border-radius:10px;
+      box-shadow:0 6px 18px rgba(15,20,30,0.06);
+      border:1px solid rgba(10,10,10,0.04);
+    }
+    form {
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:12px;
+    }
+    label{
+      display:block;font-size:13px;margin-bottom:6px;color:#123;
+    }
+    input[type="text"], input[type="number"], input[type="date"], select, textarea {
+      width:100%;
+      box-sizing:border-box;
+      padding:8px 10px;
+      border-radius:6px;
+      border:1px solid #d6dbe6;
+      background:#fff;
+      font-size:14px;
+    }
+    textarea{min-height:88px; resize:vertical}
+    .full { grid-column: 1 / -1; }
+    .actions { display:flex; gap:8px; align-items:center; justify-content:flex-end; }
+    button {
+      background:var(--accent); color:#fff; border:0; padding:8px 14px; border-radius:8px; cursor:pointer;
+      font-weight:600;
+    }
+    button.secondary { background:#eee; color:#222; font-weight:600; border:1px solid #d6dbe6; }
+    .note{font-size:13px;color:var(--muted); margin-top:6px}
+    table{width:100%; border-collapse:collapse; margin-top:12px; font-size:14px}
+    th, td{padding:8px 10px; border-bottom:1px solid #eee; text-align:left}
+    th{background:#fafbfd; font-weight:600; color:#123}
+    .img-thumb{width:60px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #e3e8f0}
+    .summary { margin-top:8px; font-size:14px; color:green }
+    @media (max-width:980px){
+      .container{grid-template-columns:1fr; padding:16px}
+      form{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Borang Pendaftaran Inventori</h1>
+      <p class="lead">Isi maklumat barang untuk direkodkan. Semua medan bertanda * wajib diisi.</p>
+
+      <form id="inventoryForm" novalidate>
+        <div class="full">
+          <label for="itemName">Nama Barang *</label>
+          <input id="itemName" name="itemName" type="text" required placeholder="Contoh: Laptop Dell Inspiron">
+        </div>
+
+        <div>
+          <label for="sku">SKU / Kod</label>
+          <input id="sku" name="sku" type="text" placeholder="Contoh: DELL-INS-001">
+        </div>
+
+        <div>
+          <label for="category">Kategori *</label>
+          <select id="category" name="category" required>
+            <option value="">-- Pilih kategori --</option>
+            <option>Elektronik</option>
+            <option>Alatan Pejabat</option>
+            <option>Peralatan Keselamatan</option>
+            <option>Perisian</option>
+            <option>Barangan Laluan</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="quantity">Kuantiti *</label>
+          <input id="quantity" name="quantity" type="number" min="1" value="1" required>
+        </div>
+
+        <div>
+          <label for="unitPrice">Harga Seunit (RM)</label>
+          <input id="unitPrice" name="unitPrice" type="number" min="0" step="0.01" placeholder="0.00">
+        </div>
+
+        <div>
+          <label for="supplier">Pembekal</label>
+          <input id="supplier" name="supplier" type="text" placeholder="Contoh: ABC Sdn Bhd">
+        </div>
+
+        <div>
+          <label for="purchaseDate">Tarikh Pembelian</label>
+          <input id="purchaseDate" name="purchaseDate" type="date">
+        </div>
+
+        <div>
+          <label for="location">Lokasi Penyimpanan</label>
+          <input id="location" name="location" type="text" placeholder="Contoh: Stor Utama, Rak A3">
+        </div>
+
+        <div>
+          <label for="condition">Kondisi</label>
+          <select id="condition" name="condition">
+            <option>Baru</option>
+            <option>Baik</option>
+            <option>Perlu Servis</option>
+            <option>Rosak</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="description">Keterangan</label>
+          <textarea id="description" name="description" placeholder="Maklumat tambahan seperti nombor siri, nota.."></textarea>
+        </div>
+
+        <div>
+          <label for="image">Gambar (pilihan)</label>
+          <input id="image" name="image" type="file" accept="image/*">
+        </div>
+
+        <div class="full actions">
+          <div class="note" style="margin-right:auto">Semua data disimpan di sini sahaja (client-side) — tiada server.</div>
+          <button type="submit">Daftar</button>
+          <button type="button" id="resetBtn" class="secondary">Reset</button>
+        </div>
+      </form>
+
+      <div id="message" class="summary" aria-live="polite" style="display:none"></div>
+    </div>
+
+    <div class="card">
+      <h1>Senarai Inventori</h1>
+      <p class="lead">Entiti yang telah didaftarkan (contoh hard-coded + entri baru akan ditambah di sini).</p>
+
+      <div style="overflow:auto; max-height:640px;">
+        <table id="inventoryTable" role="table" aria-label="Senarai inventori">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>SKU</th>
+              <th>Kategori</th>
+              <th>Kuantiti</th>
+              <th>Harga (RM)</th>
+              <th>Lokasi</th>
+              <th>Kondisi</th>
+              <th>Gambar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Hard-coded contoh entri -->
+            <tr>
+              <td>Laptop Dell Inspiron</td>
+              <td>DELL-INS-001</td>
+              <td>Elektronik</td>
+              <td>3</td>
+              <td>2400.00</td>
+              <td>Stor Utama</td>
+              <td>Baik</td>
+              <td><img src="https://via.placeholder.com/120x80?text=Dell" alt="gambar" class="img-thumb"></td>
+            </tr>
+            <tr>
+              <td>Projector Epson</td>
+              <td>EP-PRJ-002</td>
+              <td>Elektronik</td>
+              <td>1</td>
+              <td>3200.00</td>
+              <td>Bilik Mesyuarat</td>
+              <td>Baru</td>
+              <td><img src="https://via.placeholder.com/120x80?text=Epson" alt="gambar" class="img-thumb"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('inventoryForm');
+    const tableBody = document.querySelector('#inventoryTable tbody');
+    const messageEl = document.getElementById('message');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function showMessage(text, timeout=3000){
+      messageEl.textContent = text;
+      messageEl.style.display = 'block';
+      setTimeout(()=> messageEl.style.display = 'none', timeout);
+    }
+
+    function readImageAsDataURL(file){
+      return new Promise((resolve) => {
+        if(!file){ resolve(null); return; }
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function addRow(item){
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${escapeHtml(item.itemName)}</td>
+        <td>${escapeHtml(item.sku)}</td>
+        <td>${escapeHtml(item.category)}</td>
+        <td>${item.quantity}</td>
+        <td>${item.unitPrice !== '' ? Number(item.unitPrice).toFixed(2) : ''}</td>
+        <td>${escapeHtml(item.location)}</td>
+        <td>${escapeHtml(item.condition)}</td>
+        <td>${item.imageData ? '<img src="'+item.imageData+'" class="img-thumb" alt="gambar">' : ''}</td>
+      `;
+      tableBody.appendChild(tr);
+    }
+
+    function escapeHtml(unsafe){
+      if(!unsafe) return '';
+      return unsafe
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // basic validation: required fields
+      const itemName = form.itemName.value.trim();
+      const category = form.category.value.trim();
+      const quantity = Number(form.quantity.value);
+      if(!itemName || !category || !quantity || quantity <= 0){
+        showMessage('Sila lengkapkan medan wajib: Nama Barang, Kategori dan Kuantiti (kuantiti mesti > 0).');
+        return;
+      }
+
+      const file = form.image.files[0] || null;
+      const imageData = await readImageAsDataURL(file);
+
+      const item = {
+        itemName: itemName,
+        sku: form.sku.value.trim(),
+        category: category,
+        quantity: quantity,
+        unitPrice: form.unitPrice.value.trim(),
+        supplier: form.supplier.value.trim(),
+        purchaseDate: form.purchaseDate.value,
+        location: form.location.value.trim(),
+        condition: form.condition.value,
+        description: form.description.value.trim(),
+        imageData: imageData
+      };
+
+      // tambahkan ke jadual
+      addRow(item);
+
+      // reset borang (tetapkan tarikh kosong)
+      form.reset();
+      form.quantity.value = 1;
+      showMessage('Item berjaya didaftarkan ✅');
+    });
+
+    resetBtn.addEventListener('click', () => {
+      if(confirm('Reset semua medan borang?')){
+        form.reset();
+        form.quantity.value = 1;
+      }
+    });
+
+    // Optional: keyboard shortcut Ctrl+Enter to submit
+    form.addEventListener('keydown', (e) => {
+      if(e.ctrlKey && e.key === 'Enter'){
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+  </script>
+</body>
+</html>
